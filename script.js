@@ -4,7 +4,14 @@ const todoCtn = document.getElementById("todo-container");
 inputAdd.onkeyup = (event) => {
   if (event.key !== "Enter") return;
 
-  //your code here
+  if (inputAdd.value === "") {
+    alert("Todo cannot be empty");
+    return;
+  }
+
+  todoCtn.prepend(addTodo(inputAdd.value, false));
+  inputAdd.value = "";
+  saveTodo();
 };
 
 function addTodo(title, completed) {
@@ -22,27 +29,61 @@ function addTodo(title, completed) {
   const doneBtn = document.createElement("button");
   doneBtn.innerText = "Done";
   doneBtn.className = "btn btn-success me-2";
+  doneBtn.style.display = "none";
+  doneBtn.onclick = () => {
+    completed = true;
+    span.style.textDecoration = "line-through";
+    saveTodo();
+  };
 
   //create delete button
   const deleteBtn = document.createElement("button");
   deleteBtn.innerText = "Delete";
   deleteBtn.className = "btn btn-danger";
+  deleteBtn.style.display = "none";
+  deleteBtn.onclick = () => {
+    todoCtn.removeChild(div);
+    saveTodo();
+  };
 
-  //your code here
-  //append todo to HTML...
-  //define buttons event...
+  div.onmouseout = () => {
+    doneBtn.style.display = "none";
+    deleteBtn.style.display = "none";
+  };
+
+  div.onmouseover = () => {
+    doneBtn.style.display = "";
+    deleteBtn.style.display = "";
+  };
+
+  div.appendChild(span);
+  div.appendChild(doneBtn);
+  div.appendChild(deleteBtn);
+  console.log(div.getElementsByTagName("span")[0].innerText);
+  return div;
 }
 
 function saveTodo() {
   const data = [];
-  for (const todoDiv of todoCtn.children) {
-    //your code here
+  for (const div of todoCtn.children) {
+    const span = div.getElementsByTagName("span")[0];
+    data.push({
+      title: span.innerText, // It works!?
+      completed: span.style.textDecoration === "line-through",
+    });
   }
-  //your code here
+  const dataStr = JSON.stringify(data);
+  console.log("saving : " + dataStr);
+  localStorage.setItem("todoList", dataStr);
 }
 
 function loadTodo() {
-  //your code here
+  const dataStr = localStorage.getItem("todoList");
+  data = JSON.parse(dataStr);
+
+  todoCtn.innerHTML = "";
+  for (const span of data)
+    todoCtn.appendChild(addTodo(span.title, span.completed));
 }
 
 loadTodo();
