@@ -31,8 +31,8 @@ function addTodo(title, completed) {
   doneBtn.className = "btn btn-success me-2";
   doneBtn.style.display = "none";
   doneBtn.onclick = () => {
-    completed = true;
-    span.style.textDecoration = "line-through";
+    completed = !completed;
+    span.style.textDecoration = completed ? "line-through" : "";
     saveTodo();
   };
 
@@ -59,7 +59,6 @@ function addTodo(title, completed) {
   div.appendChild(span);
   div.appendChild(doneBtn);
   div.appendChild(deleteBtn);
-  console.log(div.getElementsByTagName("span")[0].innerText);
   return div;
 }
 
